@@ -1,21 +1,20 @@
-import React from 'react';
-function Api( {name, img} ) {
+import React from "react";
+import { Link } from "react-router-dom";
 
-  const [name, setName] = React.useState([]);
-
-  let [img, setImg] = React.useState([]);
+const Tarjeta = ({ id, name, img }) => {
   return (
-    <div className="card" style={{ width: "18rem", margin: "1rem auto" }}>
-      <img 
-        src={img}
-        className="card-img-top" 
-        alt="Game Cover" 
-      />
-      <div className="card-body">
-        <h5 className="card-title">{name}</h5>
+    <div className="bg-gray-800 rounded-lg p-4 text-center w-64 shadow-lg transition-transform duration-300 hover:scale-105">
+      <img className="w-full object-cover rounded-lg" style={{ height: "200px" }} src={img} alt={name} />
+      <div className="mt-2">
+        <h5 className="text-lg text-white">{name}</h5>
       </div>
+      <Link to={`/game/${id}`}>
+        <button className="bg-red-500 text-white py-2 px-4 rounded-md transition duration-300 mt-2 hover:bg-red-600">
+          Ver más información
+        </button>
+      </Link>
     </div>
   );
-}
+};
 
-export default Api;
+export default Tarjeta;
