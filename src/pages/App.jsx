@@ -78,11 +78,14 @@ const Home = () => {
 };
 
 const App = () => {
+  const { games, topRatedGames } = useGamesApi(""); // Llamada inicial sin búsqueda
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/game/:id" element={<PaginaInfo />} />
+        {/* Asegúrate de pasar todos los juegos a PaginaInfo */}
+        <Route path="/game/:id" element={<PaginaInfo games={games} />} />
       </Routes>
     </Router>
   );

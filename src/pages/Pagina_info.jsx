@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 const PaginaInfo = ({ games }) => {
   const { id } = useParams();
+  // Busca el juego utilizando el id en todos los juegos
   const game = games.find((g) => g.id.toString() === id);
 
   if (!game) {
