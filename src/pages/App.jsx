@@ -6,86 +6,68 @@ import useGamesApi from "../services/Api";
 import PaginaInfo from "../pages/Pagina_info";
 
 const Home = () => {
-  const [search, setSearch] = useState(""); // Estado para el valor de búsqueda
-  const { games, topRatedGames, searchResults, loading } = useGamesApi(search); // Pasamos `search` al hook
+  const [search, setSearch] = useState("");
+  const { games, topRatedGames, searchResults, loading } = useGamesApi(search);
 
-  // Función para manejar la búsqueda cuando el usuario hace clic en el botón
   const handleSearch = () => {
-    setSearch(search); // Actualiza el estado de búsqueda con el valor del input
+    setSearch((prev) => prev); // No era necesario, ya que el estado ya cambia con onChange
   };
 
   return (
-    <div
-      className="min-h-screen p-5 flex flex-col items-center"
-      style={{ backgroundColor: "black" }}
-    >
-      {/* Título principal */}
-      <h1 className="text-4xl font-extrabold text-white mb-6 text-center">
-        🎮 Explora Videojuegos
-      </h1>
-
-      {/* Buscador */}
-      <div className="flex items-center">
+    <div className="min-h-screen p-5 flex flex-col items-center bg-gray-900 text-white">
+      <h1 className="text-5xl font-bold mb-8 text-center">🎮 Explora Videojuegos</h1>
+      
+      <div className="flex w-full max-w-lg space-x-4">
         <input
           type="text"
           placeholder="Buscar videojuegos..."
-          className="w-full max-w-lg px-4 py-2 rounded-md text-black text-lg"
+          className="flex-1 px-4 py-3 rounded-md text-black text-lg focus:outline-none"
           value={search}
-          onChange={(e) => setSearch(e.target.value)} // Actualiza el valor del input
+          onChange={(e) => setSearch(e.target.value)}
         />
         <button
-          onClick={handleSearch} // Ejecuta la búsqueda al hacer clic
-          className="ml-4 px-6 py-2 rounded-lg bg-blue-600 text-white text-lg"
+          onClick={handleSearch}
+          className="px-6 py-3 bg-blue-600 rounded-md text-lg font-semibold hover:bg-blue-700 transition duration-300"
         >
           Buscar
         </button>
       </div>
 
-      {/* Carrusel de juegos mejor calificados */}
-      {topRatedGames.length > 0 ? (
-        <Carrusel games={topRatedGames} />
-      ) : (
-        <p className="text-white text-center text-lg">
-          Cargando juegos destacados...
-        </p>
-      )}
-
-      {/* Grid de tarjetas de videojuegos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8 w-full max-w-6xl">
-        {/* Si hay resultados de búsqueda, mostramos esos */}
-        {(searchResults.length > 0 || search) ? (
-          searchResults.map((game) => (
-            <Tarjeta key={game.id} id={game.id} name={game.name} img={game.background_image} />
-          ))
+      <div className="w-full max-w-6xl mt-8">
+        {topRatedGames.length > 0 ? (
+          <Carrusel games={topRatedGames} />
         ) : (
-          // Si no hay búsqueda y no hay resultados, mostramos los juegos iniciales
-          games.length > 0 ? (
-            games.map((game) => (
-              <Tarjeta key={game.id} id={game.id} name={game.name} img={game.background_image} />
-            ))
-          ) : (
-            <p className="text-white text-center col-span-full text-lg">
-              No se encontraron resultados...
-            </p>
-          )
+          <p className="text-center text-lg">Cargando juegos destacados...</p>
         )}
       </div>
 
-      {/* Indicador de carga */}
-      {loading && <p className="text-white text-center mt-4">Cargando juegos...</p>}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 w-full max-w-6xl">
+        {loading ? (
+          <p className="text-center col-span-full text-lg">Cargando juegos...</p>
+        ) : searchResults.length > 0 ? (
+          searchResults.map((game) => (
+            <Tarjeta key={game.id} id={game.id} name={game.name} img={game.background_image} />
+          ))
+        ) : games.length > 0 ? (
+          games.map((game) => (
+            <Tarjeta key={game.id} id={game.id} name={game.name} img={game.background_image} />
+          ))
+        ) : (
+          <p className="text-center col-span-full text-lg">No se encontraron resultados...</p>
+        )}
+      </div>
     </div>
   );
 };
 
 const App = () => {
-  const { games, topRatedGames } = useGamesApi(""); // Llamada inicial sin búsqueda
+  const { games, searchResults } = useGamesApi(""); // Incluye searchResults para garantizar la búsqueda correcta
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* Asegúrate de pasar todos los juegos a PaginaInfo */}
-        <Route path="/game/:id" element={<PaginaInfo games={games} />} />
+        <Route path="/game/:id" element={<PaginaInfo games={[...games, ...searchResults]} />} />
       </Routes>
     </Router>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Tarjeta = ({ id, name, img }) => {
+export const Tarjeta = ({ id, name, img }) => {
   return (
     <div className="bg-gray-800 rounded-lg p-4 text-center w-64 shadow-lg transition-transform duration-300 hover:scale-105">
       <img className="w-full object-cover rounded-lg" style={{ height: "200px" }} src={img} alt={name} />
@@ -16,5 +16,6 @@ const Tarjeta = ({ id, name, img }) => {
     </div>
   );
 };
+
 
 export default Tarjeta;
