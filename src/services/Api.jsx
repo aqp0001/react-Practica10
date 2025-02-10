@@ -12,7 +12,7 @@ const useGamesApi = (search) => {
       setLoading(true);
       try {
         const response = await fetch(
-          'https://api.rawg.io/api/games?key=7533378071154d42917b6b92485bcede&page_size=20'
+          'https://api.rawg.io/api/games?key=7533378071154d42917b6b92485bcede&page_size=40'
         );
         const data = await response.json();
         setGames(data.results); // Establece los juegos iniciales

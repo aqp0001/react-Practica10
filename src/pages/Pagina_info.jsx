@@ -80,8 +80,14 @@ const PaginaInfo = ({ games }) => {
         />
       </div>
 
+      {/* Descripción del juego */}
+      <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-left mb-6">
+        <h2 className="text-2xl font-semibold mb-4">Descripción:</h2>
+        <p className="text-lg">{game.description_raw || "No disponible"}</p>
+      </div>
+
       {/* Información adicional del juego */}
-      <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-center">
+      <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-center mb-6">
         <p className="text-lg mb-2">
           <strong>🎭 Géneros:</strong> {game.genres?.map((g) => g.name).join(", ") || "No disponible"}
         </p>

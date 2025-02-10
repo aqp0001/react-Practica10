@@ -32,7 +32,7 @@ const Home = () => {
             <input
               type="text"
               placeholder="Buscar videojuegos..."
-              className="flex-1 px-4 py-3 rounded-md text-black text-lg focus:outline-none"
+              className="flex-1 px-4 py-3 rounded-md text-white text-lg focus:outline-none"
               value={search}
               onChange={handleSearchChange}
             />
