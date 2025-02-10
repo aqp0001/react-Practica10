@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import FavoritoButton from "../Componentes/Boton_favorito"; // Asegúrate de ajustar la ruta correctamente
 
 const PaginaInfo = ({ games }) => {
   const { id } = useParams();
@@ -73,7 +74,7 @@ const PaginaInfo = ({ games }) => {
           style={{
             width: "100%",
             height: "auto",
-            maxWidth: "600px", // Puedes ajustar el tamaño máximo según lo desees
+            maxWidth: "600px",
             objectFit: "cover",
           }}
         />
@@ -94,6 +95,9 @@ const PaginaInfo = ({ games }) => {
           <strong>⭐ Puntuación:</strong> {game.rating || "No disponible"}
         </p>
       </div>
+
+      {/* Botón para añadir a favoritos */}
+      <FavoritoButton gameId={game.id} />
 
       {/* Botón para volver */}
       <button
