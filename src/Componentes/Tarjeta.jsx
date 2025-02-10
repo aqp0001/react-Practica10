@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 export const Tarjeta = ({ id, name, img }) => {
   return (
-    <div className="bg-gray-800 rounded-lg p-3 text-center shadow-lg transition-transform duration-300 hover:scale-105" style={{ width: "400px" }}>
-      <img className="w-full object-cover rounded-lg" style={{ height: "180px", width: "350px" }} src={img} alt={name} />
+    <div className="bg-gray-800 rounded-lg p-3 text-center shadow-lg transition-transform duration-300 hover:scale-105" style={{ width: "300px" }}>
+      <img className="w-full object-cover rounded-lg" style={{ height: "180px", width: "100%" }} src={img} alt={name} />
       <div className="mt-2">
         <h5 className="text-base text-white">{name}</h5>
       </div>
@@ -19,9 +19,11 @@ export const Tarjeta = ({ id, name, img }) => {
 
 export const TarjetasLista = ({ juegos }) => {
   return (
-    <div className="flex flex-wrap gap-4 justify-center">
+    <div className="flex flex-wrap gap-4 justify-start">
       {juegos.map((juego) => (
-        <Tarjeta key={juego.id} {...juego} />
+        <div key={juego.id} className="flex-shrink-0" style={{ width: "calc(33.333% - 16px)" }}>
+          <Tarjeta {...juego} />
+        </div>
       ))}
     </div>
   );

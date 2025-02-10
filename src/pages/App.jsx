@@ -11,26 +11,42 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const { games, topRatedGames, searchResults, loading } = useGamesApi(search);
 
+  const handleSearchChange = (e) => setSearch(e.target.value);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Aquí se puede agregar lógica de búsqueda si es necesario
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-white">
       <Header />
-      <main className="flex-grow p-5 flex flex-col items-center">
+      
+      <main className="flex-grow p-5">
+        {/* Título principal */}
         <h1 className="text-5xl font-bold mb-8 text-center">🎮 Explora Videojuegos</h1>
 
-        <div className="flex w-full max-w-lg space-x-4">
-          <input
-            type="text"
-            placeholder="Buscar videojuegos..."
-            className="flex-1 px-4 py-3 rounded-md text-black text-lg focus:outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button className="px-6 py-3 bg-blue-600 rounded-md text-lg font-semibold hover:bg-blue-700 transition">
-            Buscar
-          </button>
+        {/* Barra de búsqueda */}
+        <div className="flex w-full max-w-lg mx-auto mb-8">
+          <form onSubmit={handleSearchSubmit} className="flex w-full space-x-4">
+            <input
+              type="text"
+              placeholder="Buscar videojuegos..."
+              className="flex-1 px-4 py-3 rounded-md text-black text-lg focus:outline-none"
+              value={search}
+              onChange={handleSearchChange}
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-blue-600 rounded-md text-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Buscar
+            </button>
+          </form>
         </div>
 
-        <div className="w-full max-w-6xl mt-8">
+        {/* Carrusel de juegos destacados */}
+        <div className="w-full max-w-6xl mt-8 mb-8">
           {topRatedGames.length > 0 ? (
             <Carrusel games={topRatedGames} />
           ) : (
@@ -38,7 +54,8 @@ const Home = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 w-full max-w-6xl">
+        {/* Tarjetas de juegos */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 w-full max-w-6xl mx-auto">
           {loading ? (
             <p className="text-center col-span-full text-lg">Cargando juegos...</p>
           ) : searchResults.length > 0 ? (
@@ -54,6 +71,7 @@ const Home = () => {
           )}
         </div>
       </main>
+
       <Footer />
     </div>
   );
