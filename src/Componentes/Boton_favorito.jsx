@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from "react";
 
-// Componente para manejar la lógica de añadir/quitar de favoritos
 const FavoritoButton = ({ gameId }) => {
-  // Estado para manejar si el juego está en favoritos
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    // Comprobamos si el juego ya está en los favoritos (usando localStorage)
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    if (favoritos.includes(gameId)) {
-      setIsFavorite(true);
-    }
+    setIsFavorite(favoritos.includes(gameId));
   }, [gameId]);
 
   const toggleFavorite = () => {
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    
-    if (isFavorite) {
-      // Si el juego ya está en favoritos, lo quitamos
-      const updatedFavorites = favoritos.filter((id) => id !== gameId);
-      localStorage.setItem("favoritos", JSON.stringify(updatedFavorites));
-      setIsFavorite(false);
-    } else {
-      // Si no está en favoritos, lo agregamos
-      favoritos.push(gameId);
-      localStorage.setItem("favoritos", JSON.stringify(favoritos));
-      setIsFavorite(true);
-    }
+    const updatedFavorites = isFavorite
+      ? favoritos.filter((id) => id !== gameId)
+      : [...favoritos, gameId];
+
+    localStorage.setItem("favoritos", JSON.stringify(updatedFavorites));
+    setIsFavorite(!isFavorite);
   };
 
   return (

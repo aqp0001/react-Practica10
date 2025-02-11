@@ -15,7 +15,6 @@ const Home = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // Aquí se puede agregar lógica de búsqueda si es necesario
   };
 
   return (
@@ -23,10 +22,8 @@ const Home = () => {
       <Header />
       
       <main className="flex-grow p-5">
-        {/* Título principal */}
         <h1 className="text-5xl font-bold mb-8 text-center">🎮 Explora Videojuegos</h1>
 
-        {/* Barra de búsqueda */}
         <div className="flex w-full max-w-lg mx-auto mb-8">
           <form onSubmit={handleSearchSubmit} className="flex w-full space-x-4">
             <input
@@ -45,19 +42,17 @@ const Home = () => {
           </form>
         </div>
 
-        {/* Carrusel de juegos destacados */}
         <div className="w-full max-w-6xl mt-8 mb-8">
           {topRatedGames.length > 0 ? (
             <Carrusel games={topRatedGames} />
           ) : (
-            <p className="text-center text-lg">Cargando juegos destacados...</p>
+            <p className="text-center text-lg animate-pulse">🎮 Cargando juegos destacados...</p>
           )}
         </div>
 
-        {/* Tarjetas de juegos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 w-full max-w-6xl mx-auto">
           {loading ? (
-            <p className="text-center col-span-full text-lg">Cargando juegos...</p>
+            <p className="text-center col-span-full text-lg animate-pulse">Cargando juegos...</p>
           ) : searchResults.length > 0 ? (
             searchResults.map((game) => (
               <Tarjeta key={game.id} id={game.id} name={game.name} img={game.background_image} />

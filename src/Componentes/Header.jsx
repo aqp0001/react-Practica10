@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <header className="bg-blue-900 text-white py-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center px-6">
-        <Link to="/" className="text-2xl font-bold">
+        <Link to="/" className="text-2xl font-bold hover:text-yellow-400 transition">
           🎮 Game Explorer
         </Link>
         <nav className="hidden md:flex space-x-6">
