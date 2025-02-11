@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Tarjeta from "../Componentes/Tarjeta";
 import Carrusel from "../Componentes/Carrusel";
 import useGamesApi from "../services/Api";
-import Header from "../Componentes/header";
-import Footer from "../Componentes/footer";
+import Header from "../Componentes/Header";
+import Footer from "../Componentes/Footer";
 import PaginaInfo from "../pages/Pagina_info";
 
 const Home = () => {
