@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import FavoritoButton from "../Componentes/Boton_favorito"; // Asegúrate de ajustar la ruta correctamente
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+import FavoritoButton from "../Componentes/Boton_favorito";
+import { useState, useEffect } from "react";
 
-const PaginaInfo = ({ games }) => {
-  const { id } = useParams();
+const useGameDetails = (gameId) => {
   const [game, setGame] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,20 +12,14 @@ const PaginaInfo = ({ games }) => {
     const fetchGame = async () => {
       try {
         setLoading(true);
-        const foundGame = games.find((g) => g.id.toString() === id);
-        
-        if (foundGame) {
-          setGame(foundGame);
-        } else {
-          const response = await fetch(
-            `https://api.rawg.io/api/games/${id}?key=7533378071154d42917b6b92485bcede`
-          );
+        const response = await fetch(
+          `https://api.rawg.io/api/games/${gameId}?key=7533378071154d42917b6b92485bcede`
+        );
 
-          if (!response.ok) throw new Error("Juego no encontrado en la API");
+        if (!response.ok) throw new Error("Juego no encontrado en la API");
 
-          const data = await response.json();
-          setGame(data);
-        }
+        const data = await response.json();
+        setGame(data);
       } catch (error) {
         setError("Hubo un error al cargar el juego. Intenta nuevamente.");
         console.error(error);
@@ -34,8 +28,17 @@ const PaginaInfo = ({ games }) => {
       }
     };
 
-    fetchGame();
-  }, [id, games]);
+    if (gameId) {
+      fetchGame();
+    }
+  }, [gameId]);
+
+  return { game, error, loading };
+};
+
+const PaginaInfo = () => {
+  const { id } = useParams();
+  const { game, error, loading } = useGameDetails(id);
 
   if (loading) {
     return (
@@ -65,31 +68,27 @@ const PaginaInfo = ({ games }) => {
     <div className="min-h-screen flex flex-col items-center p-8 text-white bg-black w-full">
       <h1 className="text-4xl font-extrabold mb-4 text-center">{game.name}</h1>
 
-      {/* Imagen del juego */}
       <div className="relative mb-8 w-full flex justify-center">
         <img
           src={game.background_image}
           alt={game.name}
           className="rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
-          style={{
-            width: "100%",
-            height: "auto",
-            maxWidth: "600px",
-            objectFit: "cover",
-          }}
+          style={{ width: "100%", height: "auto", maxWidth: "600px", objectFit: "cover" }}
         />
       </div>
 
-      {/* Descripción del juego */}
       <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-left mb-6">
         <h2 className="text-2xl font-semibold mb-4">Descripción:</h2>
         <p className="text-lg">{game.description_raw || "No disponible"}</p>
       </div>
 
-      {/* Información adicional del juego */}
       <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-center mb-6">
         <p className="text-lg mb-2">
-          <strong>🎭 Géneros:</strong> {game.genres?.map((g) => g.name).join(", ") || "No disponible"}
+          <strong>🎭 Géneros:</strong> {game.genres?.map((g) => (
+            <Link key={g.id} to={`/genero/${g.slug}`} className="text-blue-400 hover:underline">
+              {g.name}
+            </Link>
+          )).reduce((prev, curr) => [prev, ", ", curr], []) || "No disponible"}
         </p>
         <p className="text-lg mb-2">
           <strong>🎮 Plataformas:</strong> {game.platforms?.map((p) => p.platform.name).join(", ") || "No disponible"}
@@ -100,12 +99,37 @@ const PaginaInfo = ({ games }) => {
         <p className="text-lg mb-2">
           <strong>⭐ Puntuación:</strong> {game.rating || "No disponible"}
         </p>
+        <p className="text-lg mb-2">
+          <strong>🏷️ Tags:</strong>{" "}
+          {game.tags?.length > 0
+            ? game.tags.map((t, index) => (
+                <span key={t.id}>
+                  {index > 0 && ", "}
+                  <Link to={`/tags/${t.slug}`} className="text-blue-400 hover:underline">
+                    {t.name}
+                  </Link>
+                </span>
+              ))
+            : "No disponible"}
+        </p>
+
+        <p className="text-lg mb-2">
+          <strong>🏢 Publisher:</strong>{" "}
+          {game.publishers?.length > 0
+            ? game.publishers.map((p, index) => (
+                <span key={p.id}>
+                  {index > 0 && ", "}
+                  <Link to={`/publisher/${encodeURIComponent(p.slug)}`} className="text-blue-400 hover:underline">
+                    {p.name}
+                  </Link>
+                </span>
+              ))
+            : "No disponible"}
+        </p>
       </div>
 
-      {/* Botón para añadir a favoritos */}
       <FavoritoButton gameId={game.id} />
 
-      {/* Botón para volver */}
       <button
         className="mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
         onClick={() => window.history.back()}

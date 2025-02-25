@@ -6,15 +6,20 @@ import useGamesApi from "../services/Api";
 import Header from "../Componentes/Header";
 import Footer from "../Componentes/Footer";
 import PaginaInfo from "../pages/Pagina_info";
+import Tags from "../pages/Tags";
+import Publisher from "../pages/Publisher";
+import BuscarPublishers from "../pages/BuscarPublishers";
 
 const Home = () => {
   const [search, setSearch] = useState("");
-  const { games, topRatedGames, searchResults, loading } = useGamesApi(search);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { games, topRatedGames, searchResults, loading, totalPages } = useGamesApi(search, currentPage);
 
   const handleSearchChange = (e) => setSearch(e.target.value);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    setCurrentPage(1);
   };
 
   return (
@@ -65,6 +70,25 @@ const Home = () => {
             <p className="text-center col-span-full text-lg">No se encontraron resultados...</p>
           )}
         </div>
+
+        {/* Paginación */}
+        <div className="flex justify-center items-center mt-8 space-x-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-blue-600 rounded-md disabled:opacity-50 hover:bg-blue-700"
+          >
+            Anterior
+          </button>
+          <span className="text-lg font-bold">Página {currentPage} de {totalPages ?? 1}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
+            disabled={currentPage >= totalPages}
+            className="px-4 py-2 bg-blue-600 rounded-md disabled:opacity-50 hover:bg-blue-700"
+          >
+            Siguiente
+          </button>
+        </div>
       </main>
 
       <Footer />
@@ -80,9 +104,13 @@ const HomeWrapper = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/game/:id" element={<PaginaInfo games={[...games, ...searchResults]} />} />
+        <Route path="/tags/:tag" element={<Tags />} />
+        <Route path="/publisher/:publisher" element={<Publisher />} />
+        <Route path="/buscarPublishers" element={<BuscarPublishers />} />
       </Routes>
     </Router>
   );
 };
 
 export default HomeWrapper;
+

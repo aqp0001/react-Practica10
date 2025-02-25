@@ -1,71 +1,86 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const useGamesApi = (search) => {
-  const [games, setGames] = useState([]); // Juegos iniciales o predeterminados
-  const [topRatedGames, setTopRatedGames] = useState([]); // Juegos mejor calificados
-  const [searchResults, setSearchResults] = useState([]); // Resultados de la búsqueda
-  const [loading, setLoading] = useState(false); // Estado de carga
+const API_KEY = "7533378071154d42917b6b92485bcede"; // Reemplázala si es necesario
+const BASE_URL = "https://api.rawg.io/api/games";
+const PAGE_SIZE = 20; // Tamaño de página fijo
 
-  // Obtener juegos iniciales (al cargar la página)
+const useGamesApi = (search, currentPage) => {
+  const [games, setGames] = useState([]);
+  const [topRatedGames, setTopRatedGames] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // 🔹 Obtener juegos principales
   useEffect(() => {
     const fetchGames = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          'https://api.rawg.io/api/games?key=7533378071154d42917b6b92485bcede&page_size=40'
+          `${BASE_URL}?key=${API_KEY}&page=${currentPage}&page_size=${PAGE_SIZE}`
         );
+        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los juegos`);
+
         const data = await response.json();
-        setGames(data.results); // Establece los juegos iniciales
+        setGames(data.results || []); // Evita undefined
+        setTotalPages(Math.ceil((data.count || 1) / PAGE_SIZE)); // Evita NaN
       } catch (error) {
-        console.error("Error al realizar la solicitud:", error);
+        console.error("Error al obtener juegos:", error);
+        setGames([]); // Evitar error de iteración
       } finally {
         setLoading(false);
       }
     };
 
     fetchGames();
-  }, []); // Solo se ejecuta una vez al cargar la página
+  }, [currentPage]);
 
-  // Obtener los juegos mejor calificados
+  // 🔹 Obtener los juegos mejor calificados
   useEffect(() => {
     const fetchTopRatedGames = async () => {
       try {
         const response = await fetch(
-          'https://api.rawg.io/api/games?key=7533378071154d42917b6b92485bcede&ordering=-rating&page_size=4'
+          `${BASE_URL}?key=${API_KEY}&ordering=-rating&page_size=4`
         );
+        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los juegos mejor calificados`);
+
         const data = await response.json();
-        setTopRatedGames(data.results); // Establece los juegos mejor calificados
+        setTopRatedGames(data.results || []);
       } catch (error) {
-        console.error("Error al realizar la solicitud:", error);
+        console.error("Error al obtener juegos mejor calificados:", error);
+        setTopRatedGames([]);
       }
     };
 
     fetchTopRatedGames();
-  }, []); // Solo se ejecuta una vez al cargar
+  }, []);
 
-  // Realizar la búsqueda
+  // 🔹 Búsqueda de juegos
   useEffect(() => {
+    if (!search) return; // No buscar si el input está vacío
+    setLoading(true);
+
     const fetchSearchResults = async () => {
-      if (search) {
-        setLoading(true);
-        try {
-          const response = await fetch(
-            `https://api.rawg.io/api/games?key=7533378071154d42917b6b92485bcede&search=${search}`
-          );
-          const data = await response.json();
-          setSearchResults(data.results); // Establece los resultados de búsqueda
-        } catch (error) {
-          console.error("Error al realizar la solicitud:", error);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const response = await fetch(
+          `${BASE_URL}?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
+        );
+        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener resultados de búsqueda`);
+
+        const data = await response.json();
+        setSearchResults(data.results || []);
+      } catch (error) {
+        console.error("Error en la búsqueda:", error);
+        setSearchResults([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchSearchResults(); // Llama a la búsqueda solo cuando `search` cambia
-  }, [search]); // Se ejecuta cuando el valor de `search` cambia
+    fetchSearchResults();
+  }, [search]);
 
-  return { games, topRatedGames, searchResults, loading };
+  return { games, topRatedGames, searchResults, loading, totalPages };
 };
 
 export default useGamesApi;
