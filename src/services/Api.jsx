@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-const API_KEY = "7533378071154d42917b6b92485bcede"; // Reemplázala si es necesario
-const BASE_URL = "https://api.rawg.io/api/games";
-const PAGE_SIZE = 20; // Tamaño de página fijo
+const API_KEY = "7533378071154d42917b6b92485bcede";
+const BASE_URL = "https://api.rawg.io/api";
+const PAGE_SIZE = 20;
 
 const useGamesApi = (search, currentPage) => {
   const [games, setGames] = useState([]);
@@ -11,22 +11,21 @@ const useGamesApi = (search, currentPage) => {
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
 
-  // 🔹 Obtener juegos principales
   useEffect(() => {
     const fetchGames = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${BASE_URL}?key=${API_KEY}&page=${currentPage}&page_size=${PAGE_SIZE}`
+          `${BASE_URL}/games?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`
         );
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los juegos`);
 
         const data = await response.json();
-        setGames(data.results || []); // Evita undefined
-        setTotalPages(Math.ceil((data.count || 1) / PAGE_SIZE)); // Evita NaN
+        setGames(Array.isArray(data.results) ? data.results : []);
+        setTotalPages(Math.max(1, Math.ceil((data.count || PAGE_SIZE) / PAGE_SIZE)));
       } catch (error) {
         console.error("Error al obtener juegos:", error);
-        setGames([]); // Evitar error de iteración
+        setGames([]);
       } finally {
         setLoading(false);
       }
@@ -35,40 +34,22 @@ const useGamesApi = (search, currentPage) => {
     fetchGames();
   }, [currentPage]);
 
-  // 🔹 Obtener los juegos mejor calificados
   useEffect(() => {
-    const fetchTopRatedGames = async () => {
-      try {
-        const response = await fetch(
-          `${BASE_URL}?key=${API_KEY}&ordering=-rating&page_size=4`
-        );
-        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los juegos mejor calificados`);
-
-        const data = await response.json();
-        setTopRatedGames(data.results || []);
-      } catch (error) {
-        console.error("Error al obtener juegos mejor calificados:", error);
-        setTopRatedGames([]);
-      }
-    };
-
-    fetchTopRatedGames();
-  }, []);
-
-  // 🔹 Búsqueda de juegos
-  useEffect(() => {
-    if (!search) return; // No buscar si el input está vacío
+    if (!search.trim()) {
+      setSearchResults([]);
+      return;
+    }
     setLoading(true);
 
     const fetchSearchResults = async () => {
       try {
         const response = await fetch(
-          `${BASE_URL}?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
+          `${BASE_URL}/games?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
         );
-        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener resultados de búsqueda`);
+        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener resultados`);
 
         const data = await response.json();
-        setSearchResults(data.results || []);
+        setSearchResults(Array.isArray(data.results) ? data.results : []);
       } catch (error) {
         console.error("Error en la búsqueda:", error);
         setSearchResults([]);
@@ -81,6 +62,70 @@ const useGamesApi = (search, currentPage) => {
   }, [search]);
 
   return { games, topRatedGames, searchResults, loading, totalPages };
+};
+
+const usePublishersApi = (search, currentPage) => {
+  const [publishers, setPublishers] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchPublishers = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${BASE_URL}/publishers?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`
+        );
+        if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los publishers`);
+
+        const data = await response.json();
+        setPublishers(Array.isArray(data.results) ? data.results : []);
+        setTotalPages(Math.max(1, Math.ceil((data.count || PAGE_SIZE) / PAGE_SIZE)));
+      } catch (error) {
+        console.error("Error al obtener publishers:", error);
+        setPublishers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPublishers();
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (!search.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    setLoading(true);
+
+    const fetchSearchResults = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/publishers?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
+        );
+        if (!response.ok) throw new Error(`Error ${response.status}: No se encontraron publishers`);
+
+        const data = await response.json();
+        setSearchResults(Array.isArray(data.results) ? data.results : []);
+      } catch (error) {
+        console.error("Error en la búsqueda de publishers:", error);
+        setSearchResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSearchResults();
+  }, [search]);
+
+  return { 
+    publishers: Array.isArray(publishers) ? publishers : [], 
+    searchResults: Array.isArray(searchResults) ? searchResults : [], 
+    loading, 
+    totalPages 
+  };
 };
 
 export default useGamesApi;

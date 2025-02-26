@@ -7,8 +7,8 @@ import Header from "../Componentes/Header";
 import Footer from "../Componentes/Footer";
 import PaginaInfo from "../pages/Pagina_info";
 import Tags from "../pages/Tags";
-import Publisher from "../pages/Publisher";
-import BuscarPublishers from "../pages/BuscarPublishers";
+import Publisher from "../pages/publisher";
+import BuscarPublishers from "../pages/buscarPublishers";
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -71,7 +71,6 @@ const Home = () => {
           )}
         </div>
 
-        {/* Paginación */}
         <div className="flex justify-center items-center mt-8 space-x-4">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
