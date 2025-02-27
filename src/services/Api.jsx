@@ -128,4 +128,4 @@ const usePublishersApi = (search, currentPage) => {
   };
 };
 
-export default useGamesApi;
+export { useGamesApi, usePublishersApi };
