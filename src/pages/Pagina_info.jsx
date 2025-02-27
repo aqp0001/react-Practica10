@@ -1,40 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import FavoritoButton from "../Componentes/Boton_favorito";
-import { useState, useEffect } from "react";
-
-const useGameDetails = (gameId) => {
-  const [game, setGame] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchGame = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `https://api.rawg.io/api/games/${gameId}?key=7533378071154d42917b6b92485bcede`
-        );
-
-        if (!response.ok) throw new Error("Juego no encontrado en la API");
-
-        const data = await response.json();
-        setGame(data);
-      } catch (error) {
-        setError("Hubo un error al cargar el juego. Intenta nuevamente.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (gameId) {
-      fetchGame();
-    }
-  }, [gameId]);
-
-  return { game, error, loading };
-};
+import { useGameDetails } from "../services/Api"; 
 
 const PaginaInfo = () => {
   const { id } = useParams();
@@ -84,7 +51,8 @@ const PaginaInfo = () => {
 
       <div className="bg-gray-900 p-6 rounded-lg shadow-md w-full max-w-2xl text-center mb-6">
         <p className="text-lg mb-2">
-          <strong>🎭 Géneros:</strong> {game.genres?.map((g) => (
+          <strong>🎭 Géneros:</strong>{" "}
+          {game.genres?.map((g) => (
             <Link key={g.id} to={`/genero/${g.slug}`} className="text-blue-400 hover:underline">
               {g.name}
             </Link>
