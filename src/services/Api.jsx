@@ -15,9 +15,9 @@ const useGamesApi = (search, currentPage) => {
     const fetchGames = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `${BASE_URL}/games?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`
-        );
+        const url = `${BASE_URL}/games?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los juegos`);
 
         const data = await response.json();
@@ -33,9 +33,9 @@ const useGamesApi = (search, currentPage) => {
 
     const fetchTopRatedGames = async () => {
       try {
-        const response = await fetch(
-          `${BASE_URL}/games?key=${API_KEY}&ordering=-rating&page_size=10`
-        );
+        const url = `${BASE_URL}/games?key=${API_KEY}&ordering=-rating&page_size=10`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener juegos populares`);
 
         const data = await response.json();
@@ -59,9 +59,9 @@ const useGamesApi = (search, currentPage) => {
 
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch(
-          `${BASE_URL}/games?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
-        );
+        const url = `${BASE_URL}/games?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener resultados`);
 
         const data = await response.json();
@@ -118,9 +118,9 @@ const usePublishersApi = (search, currentPage) => {
     const fetchPublishers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          `${BASE_URL}/publishers?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`
-        );
+        const url = `${BASE_URL}/publishers?key=${API_KEY}&page=${currentPage || 1}&page_size=${PAGE_SIZE}`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Error ${response.status}: No se pudieron obtener los publishers`);
 
         const data = await response.json();
@@ -146,9 +146,9 @@ const usePublishersApi = (search, currentPage) => {
 
     const fetchSearchResults = async () => {
       try {
-        const response = await fetch(
-          `${BASE_URL}/publishers?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`
-        );
+        const url = `${BASE_URL}/publishers?key=${API_KEY}&search=${search}&page_size=${PAGE_SIZE}`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Error ${response.status}: No se encontraron publishers`);
 
         const data = await response.json();
@@ -178,9 +178,9 @@ const useGamesByPublisher = (publisher, currentPage) => {
       try {
         setLoading(true);
         const formattedPublisher = publisher.replace(/\s+/g, "").toLowerCase();
-        const response = await fetch(
-          `${BASE_URL}/games?publishers=${formattedPublisher}&page=${currentPage}&page_size=12&key=${API_KEY}`
-        );
+        const url = `${BASE_URL}/games?publishers=${formattedPublisher}&page=${currentPage}&page_size=12&key=${API_KEY}`;
+        console.log(url);  // Verifica la URL
+        const response = await fetch(url);
         if (!response.ok) throw new Error("Error al cargar los juegos");
 
         const data = await response.json();
@@ -188,6 +188,7 @@ const useGamesByPublisher = (publisher, currentPage) => {
         setTotalPages(Math.ceil(data.count / 12));
       } catch (error) {
         setError("Hubo un problema al cargar los juegos");
+        console.error(error);
       } finally {
         setLoading(false);
       }
