@@ -1,44 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useGamesByPublisher } from "../services/Api"; // Importa el hook reutilizable
 import Tarjeta from "../Componentes/Tarjeta";
 import Header from "../Componentes/Header";
 import Footer from "../Componentes/Footer";
 
 const Publisher = () => {
   const { publisher } = useParams(); // Captura el publisher desde la URL
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  useEffect(() => {
-    const fetchGamesByPublisher = async () => {
-      try {
-        setLoading(true);
-
-        // Formatear publisher (evita espacios y caracteres extraños)
-        const formattedPublisher = publisher.replace(/\s+/g, "").toLowerCase();
-
-        const response = await fetch(
-          `https://api.rawg.io/api/games?publishers=${formattedPublisher}&page=${currentPage}&page_size=12&key=7533378071154d42917b6b92485bcede`
-        );
-
-        if (!response.ok) throw new Error("Error al cargar los juegos");
-
-        const data = await response.json();
-        setGames(data.results);
-        setTotalPages(Math.ceil(data.count / 12)); // Calcula el total de páginas basado en la cantidad de juegos
-      } catch (error) {
-        setError("Hubo un problema al cargar los juegos");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (publisher) fetchGamesByPublisher();
-  }, [publisher, currentPage]); // Se ejecuta cuando cambia el publisher o la página
+  const { games, loading, error, totalPages } = useGamesByPublisher(publisher, currentPage);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-white">
