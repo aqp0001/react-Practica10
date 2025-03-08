@@ -1,7 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit"
-import gamesReducer from "./slices/gamesSlice"
-import eventsReducer from "./slices/eventsSlice"
-import userReducer from "./slices/userSlice"
+import { configureStore } from "@reduxjs/toolkit";
+import gamesReducer from "./slices/gamesSlice";
+import eventsReducer from "./slices/eventsSlice";
+import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -9,7 +9,6 @@ export const store = configureStore({
     events: eventsReducer,
     user: userReducer,
   },
-})
+});
 
-export default store
-
+export default store;
